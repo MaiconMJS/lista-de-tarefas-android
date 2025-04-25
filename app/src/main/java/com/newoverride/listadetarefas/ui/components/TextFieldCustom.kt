@@ -1,6 +1,7 @@
 package com.newoverride.listadetarefas.ui.components
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -23,6 +24,10 @@ fun TextFieldCustom(textFieldText: MutableState<String>) {
             focusedIndicatorColor = MaterialTheme.colorScheme.tertiary,
             unfocusedIndicatorColor = MaterialTheme.colorScheme.onPrimary,
             focusedLabelColor = Green,
+            selectionColors = TextSelectionColors(
+                handleColor = MaterialTheme.colorScheme.tertiary,
+                backgroundColor = MaterialTheme.colorScheme.tertiary
+            ),
             cursorColor = MaterialTheme.colorScheme.tertiary
         ),
         modifier = Modifier.padding(bottom = Dimens.textFieldBottomPadding),

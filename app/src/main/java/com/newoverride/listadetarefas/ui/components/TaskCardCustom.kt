@@ -7,12 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import com.newoverride.listadetarefas.dimens.Dimens
 import com.newoverride.listadetarefas.model.TaskModel
 
@@ -38,9 +37,13 @@ fun TaskCardCustom(task: TaskModel) {
                     .padding(start = Dimens.paddingCheckBoxStart),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "${task.id} ->")
+                TextCustomTaskCard(text = "${task.id} ->")
                 Checkbox(
                     checked = task.marked.value,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.tertiary,
+                        uncheckedColor = MaterialTheme.colorScheme.onPrimary
+                    ),
                     onCheckedChange = { task.marked.value = it },
                 )
             }
@@ -49,7 +52,7 @@ fun TaskCardCustom(task: TaskModel) {
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.paddingTaskText)
             ) {
-                Text(text = task.message, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                TextCustomTaskCard(text = task.message)
             }
         }
     }
