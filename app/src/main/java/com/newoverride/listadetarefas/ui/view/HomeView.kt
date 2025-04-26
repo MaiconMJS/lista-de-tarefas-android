@@ -1,7 +1,11 @@
 package com.newoverride.listadetarefas.ui.view
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -20,12 +24,27 @@ fun HomeView() {
         Surface(
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+                    .imePadding(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 CardCustom(
                     textFieldText = taskHook.textFieldText,
                     saveTask = taskHook.saveTask,
                     isPressed = taskHook.isPressed,
-                    taskList = taskHook.taskList
+                    taskList = taskHook.taskList,
+                    showAllCheckBox = taskHook.showAllCheckBox,
+                    allTask = taskHook.allTask,
+                    zeroAllTaskInfo = taskHook.zeroAllTaskInfo,
+                    visibility = taskHook.visibility,
+                    hideX = taskHook.hideX,
+                    checkedCont = taskHook.checkedCont,
+                    onDelete = taskHook.onDelete,
+                    isDeleteMode = taskHook.isDeleteMode
                 )
             }
         }

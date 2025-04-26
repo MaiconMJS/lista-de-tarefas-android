@@ -10,4 +10,6 @@ object Dimens {
     val paddingVerticalCardTask = 8.dp
     val paddingCheckBoxStart = 10.dp
     val paddingTaskText = 10.dp
+    val cardHeight = 650.dp
+    val taskCardHeight = 65.dp
 }

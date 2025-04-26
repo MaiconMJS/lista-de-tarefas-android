@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -21,7 +23,15 @@ fun CardCustom(
     textFieldText: MutableState<String>,
     saveTask: () -> Unit,
     taskList: SnapshotStateList<TaskModel>,
-    isPressed: MutableState<Boolean>
+    isPressed: MutableState<Boolean>,
+    allTask: MutableIntState,
+    showAllCheckBox: () -> Unit,
+    zeroAllTaskInfo: () -> Unit,
+    visibility: MutableState<Boolean>,
+    hideX: () -> Unit,
+    checkedCont: () -> Unit,
+    onDelete: () -> Unit,
+    isDeleteMode: MutableState<Boolean>
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
@@ -31,18 +41,20 @@ fun CardCustom(
         ),
         modifier = Modifier
             .fillMaxWidth(0.9f)
-            .fillMaxHeight(0.7f)
+            .heightIn(max = Dimens.cardHeight)
     ) {
-        TitleCard()
+        TitleCardWithInfo(allTask = allTask, visibility = visibility, hideX = hideX)
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(
+            LazyColumnCustom(
+                taskList = taskList,
+                checkedCont = checkedCont,
+                showAllCheckBox = showAllCheckBox,
+                zeroAllTaskInfo = zeroAllTaskInfo,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.72f),
+                    .fillMaxHeight(0.74f)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                LazyColumnCustom(taskList = taskList)
-            }
+            )
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -52,7 +64,9 @@ fun CardCustom(
                 TextFieldCustom(textFieldText = textFieldText)
                 ButtonCustom(
                     onClick = saveTask,
-                    isPressed = isPressed.value
+                    isPressed = isPressed,
+                    onDelete = onDelete,
+                    isDeleteMode = isDeleteMode
                 )
             }
         }

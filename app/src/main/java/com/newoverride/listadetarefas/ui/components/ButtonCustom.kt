@@ -9,6 +9,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -19,23 +20,31 @@ import com.newoverride.listadetarefas.dimens.Dimens
 @Composable
 fun ButtonCustom(
     onClick: () -> Unit,
-    isPressed: Boolean,
+    onDelete: () -> Unit,
+    isPressed: MutableState<Boolean>,
+    isDeleteMode: MutableState<Boolean>
 ) {
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1.0f,
+        targetValue = if (isPressed.value) 0.9f else 1.0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
         ),
         label = "spring-press-scale"
     )
+
+    val modifier = Modifier
+        .scale(scale)
+        .padding(bottom = Dimens.buttonBottomPadding)
+
     Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
-        modifier = Modifier
-            .scale(scale)
-            .padding(bottom = Dimens.buttonBottomPadding),
+        onClick = if (isDeleteMode.value) onDelete else onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = if (isDeleteMode.value) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary),
+        modifier = modifier
     ) {
-        Text(text = stringResource(R.string.salvar), style = MaterialTheme.typography.labelSmall)
+        Text(
+            text = stringResource(if (isDeleteMode.value) R.string.deletar else R.string.salvar),
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }
