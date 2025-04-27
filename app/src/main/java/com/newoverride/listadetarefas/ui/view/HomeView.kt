@@ -44,7 +44,8 @@ fun HomeView() {
                     hideX = taskHook.hideX,
                     checkedCont = taskHook.checkedCont,
                     onDelete = taskHook.onDelete,
-                    isDeleteMode = taskHook.isDeleteMode
+                    isDeleteMode = taskHook.isDeleteMode,
+                    addTaskDone = taskHook.addTaskDone
                 )
             }
         }

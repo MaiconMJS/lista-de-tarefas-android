@@ -16,5 +16,6 @@ data class TaskHookModel(
     val hideX: () -> Unit,
     val checkedCont: () -> Unit,
     val onDelete: () -> Unit,
-    val isDeleteMode: MutableState<Boolean>
+    val isDeleteMode: MutableState<Boolean>,
+    val addTaskDone: () -> Unit
 )

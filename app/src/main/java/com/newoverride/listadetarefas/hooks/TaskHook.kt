@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,7 +20,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun taskHook(): TaskHookModel {
-    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     val coroutineScope = rememberCoroutineScope()
@@ -51,7 +49,7 @@ fun taskHook(): TaskHookModel {
     fun animatedButton(active: MutableState<Boolean>) {
         active.value = true
         coroutineScope.launch {
-            delay(300)
+            delay(200)
             active.value = false
         }
     }
@@ -65,12 +63,27 @@ fun taskHook(): TaskHookModel {
        allTask.intValue = 0
     }
 
+    fun hideX(taskList: SnapshotStateList<TaskModel>) {
+        taskList.forEach { items ->
+            items.marked.value = false
+            items.showCheckBox.value = false
+        }
+        visibility.value = false
+        showAllTaskInfo(taskList)
+        isDeleteMode.value = false
+        focusManager.clearFocus()
+    }
+
     fun onDelete(taskList: SnapshotStateList<TaskModel>) {
         animatedButton(isPressed)
         val itemsToRemove = taskList.filter { it.marked.value }
         taskList.removeAll(itemsToRemove)
-        showAllTaskInfo(taskList)
-        zeroAllTaskInfo()
+        hideX(taskList)
+    }
+
+    fun checkedCont(taskList: SnapshotStateList<TaskModel>) {
+        val totalChecked = taskList.filter { it.marked.value }.size
+        allTask.intValue = totalChecked
     }
 
     val zeroAllTaskInfo = {
@@ -87,6 +100,7 @@ fun taskHook(): TaskHookModel {
         }
         visibility.value = true
         isDeleteMode.value = true
+        focusManager.clearFocus()
     }
 
     val showAllCheckBox = {
@@ -95,40 +109,34 @@ fun taskHook(): TaskHookModel {
 
     fun verifyTextFieldAndAddTask(taskList: SnapshotStateList<TaskModel>) {
         val removeSpace = textFieldText.value.trim()
+        focusManager.clearFocus()
         if (removeSpace.isEmpty()) return
         val index = taskList.size
         taskList.add(TaskModel(id = index + 1, message = removeSpace))
         textFieldText.value = ""
         animatedButton(isPressed)
-        keyboardController?.hide()
         focusManager.clearFocus()
     }
 
-    val saveTask = {
+    fun saveTask(taskList: SnapshotStateList<TaskModel>) {
         verifyTextFieldAndAddTask(taskList)
         showAllTaskInfo(taskList)
     }
 
-    fun hideX(taskList: SnapshotStateList<TaskModel>) {
-        taskList.forEach { items ->
-            items.marked.value = false
-            items.showCheckBox.value = false
-        }
-        visibility.value = false
-        showAllTaskInfo(taskList)
-        isDeleteMode.value = false
+    val saveTask = {
+        saveTask(taskList)
     }
 
     val hideX = {
         hideX(taskList)
     }
 
-    fun incrementTaskCont() {
-        allTask.intValue++
+    val checkedCont = {
+        checkedCont(taskList)
     }
 
-    val checkedCont = {
-        incrementTaskCont()
+    val addTaskDone = {
+        saveTask(taskList)
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -150,6 +158,7 @@ fun taskHook(): TaskHookModel {
         hideX = hideX,
         checkedCont = checkedCont,
         onDelete = onDelete,
-        isDeleteMode = isDeleteMode
+        isDeleteMode = isDeleteMode,
+        addTaskDone = addTaskDone
     )
 }

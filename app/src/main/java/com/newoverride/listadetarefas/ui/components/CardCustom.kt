@@ -31,7 +31,8 @@ fun CardCustom(
     hideX: () -> Unit,
     checkedCont: () -> Unit,
     onDelete: () -> Unit,
-    isDeleteMode: MutableState<Boolean>
+    isDeleteMode: MutableState<Boolean>,
+    addTaskDone: () -> Unit
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
@@ -61,7 +62,7 @@ fun CardCustom(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TextFieldCustom(textFieldText = textFieldText)
+                TextFieldCustom(textFieldText = textFieldText, addTaskDone = addTaskDone)
                 ButtonCustom(
                     onClick = saveTask,
                     isPressed = isPressed,
