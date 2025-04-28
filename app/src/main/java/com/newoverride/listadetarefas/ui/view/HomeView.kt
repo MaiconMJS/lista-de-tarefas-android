@@ -45,7 +45,10 @@ fun HomeView() {
                     checkedCont = taskHook.checkedCont,
                     onDelete = taskHook.onDelete,
                     isDeleteMode = taskHook.isDeleteMode,
-                    addTaskDone = taskHook.addTaskDone
+                    addTaskDone = taskHook.addTaskDone,
+                    lazyListState = taskHook.lazyListState,
+                    selectAllTask = taskHook.selectAllTask,
+                    pressedAllTask = taskHook.pressedAllTask
                 )
             }
         }

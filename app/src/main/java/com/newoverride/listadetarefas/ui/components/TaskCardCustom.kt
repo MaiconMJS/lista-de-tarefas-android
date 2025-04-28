@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,17 +55,16 @@ fun TaskCardCustom(
                     .padding(start = Dimens.paddingCheckBoxStart),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextCustomTaskCard(text = "${task.id} ->")
-                if (task.showCheckBox.value) Checkbox(
+                TextCustomTaskCard(
+                    text = "\uD83D\uDCDD ${task.id.intValue}",
+                    modifier = Modifier.padding(end = Dimens.paddingTextAndCheckbox)
+                )
+                if (task.showCheckBox.value) CircleCheckbox(
                     checked = task.marked.value,
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colorScheme.tertiary,
-                        uncheckedColor = MaterialTheme.colorScheme.onPrimary
-                    ),
                     onCheckedChange = {
-                        task.marked.value = it
+                        task.marked.value = !task.marked.value
                         checkedCont()
-                    },
+                    }
                 )
             }
             Row(
@@ -75,7 +72,7 @@ fun TaskCardCustom(
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.paddingTaskText)
             ) {
-                TextCustomTaskCard(text = task.message)
+                TextCustomTaskCard(text = task.message, modifier = Modifier)
             }
         }
     }

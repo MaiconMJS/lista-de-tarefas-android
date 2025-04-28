@@ -13,6 +13,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import com.newoverride.listadetarefas.R
 import com.newoverride.listadetarefas.dimens.Dimens
 import com.newoverride.listadetarefas.ui.theme.Green
@@ -38,6 +39,7 @@ fun TextFieldCustom(
         ),
         modifier = Modifier.padding(bottom = Dimens.textFieldBottomPadding),
         keyboardOptions = KeyboardOptions.Default.copy(
+            capitalization = KeyboardCapitalization.Sentences,
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = { addTaskDone() }),

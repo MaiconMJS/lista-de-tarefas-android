@@ -1,5 +1,6 @@
 package com.newoverride.listadetarefas.model
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -17,5 +18,8 @@ data class TaskHookModel(
     val checkedCont: () -> Unit,
     val onDelete: () -> Unit,
     val isDeleteMode: MutableState<Boolean>,
-    val addTaskDone: () -> Unit
+    val addTaskDone: () -> Unit,
+    val lazyListState: LazyListState,
+    val selectAllTask: () -> Unit,
+    val pressedAllTask: MutableState<Boolean>
 )

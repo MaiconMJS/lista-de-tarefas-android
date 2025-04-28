@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +33,10 @@ fun CardCustom(
     checkedCont: () -> Unit,
     onDelete: () -> Unit,
     isDeleteMode: MutableState<Boolean>,
-    addTaskDone: () -> Unit
+    addTaskDone: () -> Unit,
+    lazyListState: LazyListState,
+    selectAllTask: () -> Unit,
+    pressedAllTask: MutableState<Boolean>
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
@@ -44,12 +48,19 @@ fun CardCustom(
             .fillMaxWidth(0.9f)
             .heightIn(max = Dimens.cardHeight)
     ) {
-        TitleCardWithInfo(allTask = allTask, visibility = visibility, hideX = hideX)
+        TitleCardWithInfo(
+            allTask = allTask,
+            visibility = visibility,
+            hideX = hideX,
+            selectAllTask = selectAllTask,
+            pressedAllTask = pressedAllTask
+        )
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumnCustom(
                 taskList = taskList,
                 checkedCont = checkedCont,
                 showAllCheckBox = showAllCheckBox,
+                lazyListState = lazyListState,
                 zeroAllTaskInfo = zeroAllTaskInfo,
                 modifier = Modifier
                     .fillMaxHeight(0.74f)

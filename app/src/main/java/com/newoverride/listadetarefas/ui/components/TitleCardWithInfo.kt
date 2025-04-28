@@ -1,5 +1,8 @@
 package com.newoverride.listadetarefas.ui.components
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -11,10 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.newoverride.listadetarefas.R
 import com.newoverride.listadetarefas.dimens.Dimens
@@ -23,7 +29,9 @@ import com.newoverride.listadetarefas.dimens.Dimens
 fun TitleCardWithInfo(
     allTask: MutableIntState,
     visibility: MutableState<Boolean>,
-    hideX: () -> Unit
+    hideX: () -> Unit,
+    selectAllTask: () -> Unit,
+    pressedAllTask: MutableState<Boolean>
 ) {
     Row(
         modifier = Modifier
@@ -33,13 +41,29 @@ fun TitleCardWithInfo(
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val scale by animateFloatAsState(
+            targetValue = if (pressedAllTask.value) 0.8f else 1.0f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium
+            ),
+            label = "spring-press-scale"
+        )
         Row(
             modifier = Modifier
-                .fillMaxWidth(0.1f),
+                .fillMaxWidth(0.1f)
+                .scale(scale)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { selectAllTask() })
+                },
             horizontalArrangement = Arrangement.Center
 
         ) {
-            Text(text = "${allTask.intValue}", style = MaterialTheme.typography.labelSmall)
+            Text(
+                text = "\uD83D\uDCDD\n${allTask.intValue}",
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center
+            )
         }
         Row(
             modifier = Modifier.fillMaxWidth(0.7f),
