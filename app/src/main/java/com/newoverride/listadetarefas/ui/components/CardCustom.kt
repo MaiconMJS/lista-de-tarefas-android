@@ -1,11 +1,15 @@
 package com.newoverride.listadetarefas.ui.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,7 +32,7 @@ fun CardCustom(
     allTask: MutableIntState,
     showAllCheckBox: () -> Unit,
     zeroAllTaskInfo: () -> Unit,
-    visibility: MutableState<Boolean>,
+    visibilityX: MutableState<Boolean>,
     hideX: () -> Unit,
     checkedCont: () -> Unit,
     onDelete: () -> Unit,
@@ -36,7 +40,15 @@ fun CardCustom(
     addTaskDone: () -> Unit,
     lazyListState: LazyListState,
     selectAllTask: () -> Unit,
-    pressedAllTask: MutableState<Boolean>
+    pressedAllTask: MutableState<Boolean>,
+    goToContent: () -> Unit,
+    contentView: MutableState<Boolean>,
+    indexTask: MutableIntState,
+    arrowBack: () -> Unit,
+    taskEditorDone: () -> Unit,
+    messageToEditor: MutableState<String>,
+    whatsAppPressed: MutableState<Boolean>,
+    whatsAppShare: () -> Unit
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
@@ -50,13 +62,16 @@ fun CardCustom(
     ) {
         TitleCardWithInfo(
             allTask = allTask,
-            visibility = visibility,
+            visibilityX = visibilityX,
             hideX = hideX,
             selectAllTask = selectAllTask,
-            pressedAllTask = pressedAllTask
+            pressedAllTask = pressedAllTask,
+            contentView = contentView,
+            arrowBack = arrowBack,
+            indexTask = indexTask
         )
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumnCustom(
+            if (!contentView.value) LazyColumnCustom(
                 taskList = taskList,
                 checkedCont = checkedCont,
                 showAllCheckBox = showAllCheckBox,
@@ -65,20 +80,45 @@ fun CardCustom(
                 modifier = Modifier
                     .fillMaxHeight(0.74f)
                     .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
+                horizontalAlignment = Alignment.CenterHorizontally,
+                goToContent = goToContent,
+                indexTask = indexTask
+            ) else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    TextFieldEditorView(textFieldTextEditor = messageToEditor)
+                }
+            }
+            if (contentView.value) Box(modifier = Modifier.fillMaxSize()) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = Dimens.whatsAppHeight, end = Dimens.whatsAppWidth)
+                ) {
+                    WhatsAppButton(whatsAppShare = whatsAppShare, whatsAppPressed = whatsAppPressed)
+                }
+            }
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .imePadding()
+                    .animateContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TextFieldCustom(textFieldText = textFieldText, addTaskDone = addTaskDone)
+                if (!contentView.value) TextFieldCustom(
+                    textFieldText = textFieldText,
+                    addTaskDone = addTaskDone,
+                )
                 ButtonCustom(
                     onClick = saveTask,
                     isPressed = isPressed,
                     onDelete = onDelete,
-                    isDeleteMode = isDeleteMode
+                    isDeleteMode = isDeleteMode,
+                    contentView = contentView,
+                    taskEditorDone = taskEditorDone,
                 )
             }
         }

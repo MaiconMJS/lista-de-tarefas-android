@@ -11,6 +11,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -22,7 +23,9 @@ fun TaskCardCustom(
     task: TaskModel,
     showAllCheckBox: () -> Unit,
     zeroAllTaskInfo: () -> Unit,
-    checkedCont: () -> Unit
+    checkedCont: () -> Unit,
+    goToContent: () -> Unit,
+    indexTask: MutableIntState
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
@@ -37,6 +40,10 @@ fun TaskCardCustom(
                         showAllCheckBox()
                         zeroAllTaskInfo()
                     },
+                    onTap = {
+                        indexTask.intValue = task.id.intValue
+                        goToContent()
+                    }
                 )
             },
         colors = CardDefaults.cardColors(
@@ -72,7 +79,7 @@ fun TaskCardCustom(
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.paddingTaskText)
             ) {
-                TextCustomTaskCard(text = task.message, modifier = Modifier)
+                TextCustomTaskCard(text = task.message.value, modifier = Modifier)
             }
         }
     }

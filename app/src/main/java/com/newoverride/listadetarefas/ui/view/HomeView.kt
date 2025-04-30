@@ -1,5 +1,7 @@
 package com.newoverride.listadetarefas.ui.view
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +22,10 @@ fun HomeView() {
 
     val taskHook = taskHook()
 
+    BackHandler(enabled = taskHook.contentView.value) {
+        taskHook.arrowBack()
+    }
+
     ListaDeTarefasTheme {
         Surface(
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -28,7 +34,8 @@ fun HomeView() {
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
                     .fillMaxSize()
-                    .imePadding(),
+                    .imePadding()
+                    .animateContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -40,7 +47,7 @@ fun HomeView() {
                     showAllCheckBox = taskHook.showAllCheckBox,
                     allTask = taskHook.allTask,
                     zeroAllTaskInfo = taskHook.zeroAllTaskInfo,
-                    visibility = taskHook.visibility,
+                    visibilityX = taskHook.visibilityX,
                     hideX = taskHook.hideX,
                     checkedCont = taskHook.checkedCont,
                     onDelete = taskHook.onDelete,
@@ -48,7 +55,15 @@ fun HomeView() {
                     addTaskDone = taskHook.addTaskDone,
                     lazyListState = taskHook.lazyListState,
                     selectAllTask = taskHook.selectAllTask,
-                    pressedAllTask = taskHook.pressedAllTask
+                    pressedAllTask = taskHook.pressedAllTask,
+                    goToContent = taskHook.goToContent,
+                    contentView = taskHook.contentView,
+                    indexTask = taskHook.indexTask,
+                    arrowBack = taskHook.arrowBack,
+                    taskEditorDone = taskHook.taskEditorDone,
+                    messageToEditor = taskHook.messageToEditor,
+                    whatsAppPressed = taskHook.whatsAppPressed,
+                    whatsAppShare = taskHook.whatsAppShare
                 )
             }
         }

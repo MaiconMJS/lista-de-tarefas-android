@@ -1,5 +1,8 @@
 package com.newoverride.listadetarefas.hooks
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,10 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.newoverride.listadetarefas.R
 import com.newoverride.listadetarefas.model.TaskHookModel
 import com.newoverride.listadetarefas.model.TaskModel
 import kotlinx.coroutines.delay
@@ -22,167 +27,141 @@ import kotlinx.coroutines.launch
 @Composable
 fun taskHook(): TaskHookModel {
     val focusManager = LocalFocusManager.current
-
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val pressedAllTask = remember { mutableStateOf(false) }
-    val isDeleteMode = remember { mutableStateOf<Boolean>(false) }
-    val visibility = remember { mutableStateOf(false) }
+    val isDeleteMode = remember { mutableStateOf(false) }
+    val visibilityX = remember { mutableStateOf(false) }
     val allTask = remember { mutableIntStateOf(0) }
     val textFieldText = remember { mutableStateOf("") }
     val isPressed = remember { mutableStateOf(false) }
+    val contentView = remember { mutableStateOf(false) }
+    val indexTask = remember { mutableIntStateOf(0) }
+    val messageToEditor = remember { mutableStateOf("") }
+    val whatsAppPressed = remember { mutableStateOf(false) }
     val taskList = remember {
         mutableStateListOf<TaskModel>(
             TaskModel(
                 id = mutableIntStateOf(1),
-                message = "Comprar pão",
-                isVisible = mutableStateOf(true)
+                message = mutableStateOf("Comprar pão"),
             ),
             TaskModel(
                 id = mutableIntStateOf(2),
-                message = "Estudar Kotlin",
-                isVisible = mutableStateOf(true)
+                message = mutableStateOf("Estudar Kotlin"),
             ),
             TaskModel(
                 id = mutableIntStateOf(3),
-                message = "Ir à academia",
-                isVisible = mutableStateOf(true)
+                message = mutableStateOf("Ir à academia"),
             ),
-//            TaskModel(
-//                id = mutableIntStateOf(4),
-//                message = "Ler livro",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(5),
-//                message = "Escrever código",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(6),
-//                message = "Revisar projeto",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(7),
-//                message = "Limpar a casa",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(8),
-//                message = "Lavar roupa",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(9),
-//                message = "Fazer mercado",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(10),
-//                message = "Estudar Compose",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(11),
-//                message = "Atualizar currículo",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(12),
-//                message = "Planejar viagem",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(13),
-//                message = "Marcar médico",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(14),
-//                message = "Fazer backup",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(15),
-//                message = "Meditar",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(16),
-//                message = "Pagar contas",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(17),
-//                message = "Jogar videogame",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(18),
-//                message = "Estudar inglês",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(19),
-//                message = "Organizar fotos",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(20),
-//                message = "Testar app",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(21),
-//                message = "Cozinhar almoço",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(22),
-//                message = "Atualizar sistema",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(23),
-//                message = "Aprender React",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(24),
-//                message = "Jogar futebol",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(25),
-//                message = "Pintar quadro",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(26),
-//                message = "Trocar senha",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(27),
-//                message = "Cuidar do jardim",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(28),
-//                message = "Visitar amigos",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(29),
-//                message = "Fazer yoga",
-//                isVisible = mutableStateOf(true)
-//            ),
-//            TaskModel(
-//                id = mutableIntStateOf(30),
-//                message = "Escrever diário",
-//                isVisible = mutableStateOf(true)
-//            )
+            TaskModel(
+                id = mutableIntStateOf(4),
+                message = mutableStateOf("Ler livro"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(5),
+                message = mutableStateOf("Escrever código"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(6),
+                message = mutableStateOf("Revisar projeto"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(7),
+                message = mutableStateOf("Limpar a casa"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(8),
+                message = mutableStateOf("Lavar roupa"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(9),
+                message = mutableStateOf("Fazer mercado"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(10),
+                message = mutableStateOf("Estudar Compose"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(11),
+                message = mutableStateOf("Atualizar currículo"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(12),
+                message = mutableStateOf("Planejar viagem"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(13),
+                message = mutableStateOf("Marcar médico"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(14),
+                message = mutableStateOf("Fazer backup"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(15),
+                message = mutableStateOf("Meditar"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(16),
+                message = mutableStateOf("Pagar contas"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(17),
+                message = mutableStateOf("Jogar videogame"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(18),
+                message = mutableStateOf("Estudar inglês"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(19),
+                message = mutableStateOf("Organizar fotos"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(20),
+                message = mutableStateOf("Testar app"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(21),
+                message = mutableStateOf("Cozinhar almoço"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(22),
+                message = mutableStateOf("Atualizar sistema"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(23),
+                message = mutableStateOf("Aprender React"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(24),
+                message = mutableStateOf("Jogar futebol"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(25),
+                message = mutableStateOf("Pintar quadro"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(26),
+                message = mutableStateOf("Trocar senha"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(27),
+                message = mutableStateOf("Cuidar do jardim"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(28),
+                message = mutableStateOf("Visitar amigos"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(29),
+                message = mutableStateOf("Fazer yoga"),
+            ),
+            TaskModel(
+                id = mutableIntStateOf(30),
+                message = mutableStateOf("Escrever diário"),
+            )
         )
     }
 
@@ -213,7 +192,7 @@ fun taskHook(): TaskHookModel {
             items.marked.value = false
             items.showCheckBox.value = false
         }
-        visibility.value = false
+        visibilityX.value = false
         showAllTaskInfo(taskList)
         isDeleteMode.value = false
         focusManager.clearFocus()
@@ -263,7 +242,7 @@ fun taskHook(): TaskHookModel {
         taskList.forEach { items ->
             items.showCheckBox.value = true
         }
-        visibility.value = true
+        visibilityX.value = true
         isDeleteMode.value = true
         focusManager.clearFocus()
     }
@@ -273,13 +252,13 @@ fun taskHook(): TaskHookModel {
     }
 
     fun verifyTextFieldAndAddTask(taskList: SnapshotStateList<TaskModel>) {
-        val removeSpace = textFieldText.value.trim()
+        var removeSpace = textFieldText.value.trim()
         focusManager.clearFocus()
         if (removeSpace.isEmpty()) return
         val index = taskList.size
         val newTask = TaskModel(
             id = mutableIntStateOf(index + 1),
-            message = removeSpace,
+            message = mutableStateOf(removeSpace),
             isVisible = mutableStateOf(false)
         )
         textFieldText.value = ""
@@ -315,28 +294,62 @@ fun taskHook(): TaskHookModel {
     }
 
     fun selectAllTask(taskList: SnapshotStateList<TaskModel>) {
-        if (taskList.isNotEmpty()) {
-            if (taskList[0].showCheckBox.value) {
-                val verifyMarked = taskList.filter { it.marked.value }.size
-                if (verifyMarked == taskList.size) {
-                    taskList.forEach { items ->
-                        items.marked.value = false
-                    }
-                    showAllTaskInfoMarked(taskList)
-                    animatedButton(pressedAllTask)
-                    return
-                }
+        if (taskList.isNotEmpty() && taskList[0].showCheckBox.value) {
+            val verifyMarked = taskList.filter { it.marked.value }.size
+            if (verifyMarked == taskList.size) {
                 taskList.forEach { items ->
-                    items.marked.value = true
+                    items.marked.value = false
                 }
                 showAllTaskInfoMarked(taskList)
                 animatedButton(pressedAllTask)
+                return
             }
+            taskList.forEach { items ->
+                items.marked.value = true
+            }
+            showAllTaskInfoMarked(taskList)
+            animatedButton(pressedAllTask)
         }
+    }
+
+    val goToContent = {
+        if (taskList.isNotEmpty() && !taskList[0].showCheckBox.value) {
+            contentView.value = !contentView.value
+            messageToEditor.value =
+                "${taskList[indexTask.intValue - 1].message.value} ${textFieldText.value}"
+        }
+    }
+
+    fun arrowBack() {
+        contentView.value = !contentView.value
+    }
+
+    val arrowBack = {
+        arrowBack()
     }
 
     val selectAllTask = {
         selectAllTask(taskList)
+    }
+
+    val taskEditorDone = {
+        animatedButton(isPressed)
+        taskList[indexTask.intValue - 1].message.value = messageToEditor.value
+        arrowBack()
+    }
+
+    val whatsAppShare = {
+        animatedButton(whatsAppPressed)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            setPackage("com.whatsapp")
+            putExtra(Intent.EXTRA_TEXT, messageToEditor.value)
+        }
+        try {
+            context.startActivity(intent)
+        } catch (error: ActivityNotFoundException) {
+            Toast.makeText(context, context.getString(R.string.erro), Toast.LENGTH_SHORT).show()
+        }
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -354,7 +367,7 @@ fun taskHook(): TaskHookModel {
         allTask = allTask,
         showAllCheckBox = showAllCheckBox,
         zeroAllTaskInfo = zeroAllTaskInfo,
-        visibility = visibility,
+        visibilityX = visibilityX,
         hideX = hideX,
         checkedCont = checkedCont,
         onDelete = onDelete,
@@ -362,6 +375,14 @@ fun taskHook(): TaskHookModel {
         addTaskDone = addTaskDone,
         lazyListState = lazyListState,
         selectAllTask = selectAllTask,
-        pressedAllTask = pressedAllTask
+        pressedAllTask = pressedAllTask,
+        goToContent = goToContent,
+        contentView = contentView,
+        indexTask = indexTask,
+        arrowBack = arrowBack,
+        taskEditorDone = taskEditorDone,
+        messageToEditor = messageToEditor,
+        whatsAppPressed = whatsAppPressed,
+        whatsAppShare = whatsAppShare
     )
 }

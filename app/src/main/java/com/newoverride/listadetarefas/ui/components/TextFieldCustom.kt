@@ -21,7 +21,7 @@ import com.newoverride.listadetarefas.ui.theme.Green
 @Composable
 fun TextFieldCustom(
     textFieldText: MutableState<String>,
-    addTaskDone: () -> Unit
+    addTaskDone: () -> Unit,
 ) {
     OutlinedTextField(
         value = textFieldText.value,
@@ -43,5 +43,7 @@ fun TextFieldCustom(
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = { addTaskDone() }),
-        label = { Text(text = stringResource(R.string.tarefa)) })
+        label = {
+            Text(text = stringResource(R.string.tarefa))
+        })
 }

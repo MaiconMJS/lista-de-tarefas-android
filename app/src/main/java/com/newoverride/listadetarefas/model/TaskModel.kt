@@ -8,6 +8,6 @@ data class TaskModel(
     val id: MutableIntState,
     val showCheckBox: MutableState<Boolean> = mutableStateOf(false),
     val marked: MutableState<Boolean> = mutableStateOf(false),
-    val message: String,
-    val isVisible: MutableState<Boolean>
+    val message: MutableState<String>,
+    val isVisible: MutableState<Boolean> = mutableStateOf(true)
 )

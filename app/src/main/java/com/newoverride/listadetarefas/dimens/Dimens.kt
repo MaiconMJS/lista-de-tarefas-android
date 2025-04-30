@@ -16,4 +16,7 @@ object Dimens {
     val paddingTextAndCheckbox = 8.dp
     val checkboxSize = 20.dp
     val textToCheckbox = 14.sp
+    val heightContainerXAndArrowBack = 30.dp
+    val whatsAppHeight = 50.dp
+    val whatsAppWidth = 15.dp
 }

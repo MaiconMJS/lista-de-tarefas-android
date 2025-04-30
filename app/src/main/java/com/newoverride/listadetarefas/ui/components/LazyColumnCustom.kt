@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -34,7 +35,9 @@ fun LazyColumnCustom(
     showAllCheckBox: () -> Unit,
     zeroAllTaskInfo: () -> Unit,
     checkedCont: () -> Unit,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
+    goToContent: () -> Unit,
+    indexTask: MutableIntState
 ) {
     LazyColumn(
         modifier = modifier,
@@ -81,7 +84,9 @@ fun LazyColumnCustom(
                     task = task,
                     showAllCheckBox = showAllCheckBox,
                     zeroAllTaskInfo = zeroAllTaskInfo,
-                    checkedCont = checkedCont
+                    checkedCont = checkedCont,
+                    goToContent = goToContent,
+                    indexTask = indexTask
                 )
             }
         }

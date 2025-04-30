@@ -13,7 +13,7 @@ data class TaskHookModel(
     val allTask: MutableIntState,
     val showAllCheckBox: () -> Unit,
     val zeroAllTaskInfo: () -> Unit,
-    val visibility: MutableState<Boolean>,
+    val visibilityX: MutableState<Boolean>,
     val hideX: () -> Unit,
     val checkedCont: () -> Unit,
     val onDelete: () -> Unit,
@@ -21,5 +21,13 @@ data class TaskHookModel(
     val addTaskDone: () -> Unit,
     val lazyListState: LazyListState,
     val selectAllTask: () -> Unit,
-    val pressedAllTask: MutableState<Boolean>
+    val pressedAllTask: MutableState<Boolean>,
+    val goToContent: () -> Unit,
+    val contentView: MutableState<Boolean>,
+    val indexTask: MutableIntState,
+    val arrowBack: () -> Unit,
+    val taskEditorDone: () -> Unit,
+    val messageToEditor: MutableState<String>,
+    val whatsAppPressed: MutableState<Boolean>,
+    val whatsAppShare: () -> Unit
 )
