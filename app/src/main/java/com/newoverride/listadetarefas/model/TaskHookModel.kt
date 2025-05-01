@@ -29,5 +29,6 @@ data class TaskHookModel(
     val taskEditorDone: () -> Unit,
     val messageToEditor: MutableState<String>,
     val whatsAppPressed: MutableState<Boolean>,
-    val whatsAppShare: () -> Unit
+    val whatsAppShare: () -> Unit,
+    val hideButtonEditor: MutableState<Boolean>
 )

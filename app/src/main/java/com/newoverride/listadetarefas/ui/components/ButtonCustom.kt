@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import com.newoverride.listadetarefas.R
 import com.newoverride.listadetarefas.dimens.Dimens
-import com.newoverride.listadetarefas.ui.theme.Orange
 
 @Composable
 fun ButtonCustom(
@@ -24,11 +23,9 @@ fun ButtonCustom(
     onDelete: () -> Unit,
     isPressed: MutableState<Boolean>,
     isDeleteMode: MutableState<Boolean>,
-    contentView: MutableState<Boolean>,
-    taskEditorDone: () -> Unit
 ) {
     val scale by animateFloatAsState(
-        targetValue = if (isPressed.value) 0.9f else 1.0f,
+        targetValue = if (isPressed.value) 0.8f else 1.0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
@@ -41,39 +38,15 @@ fun ButtonCustom(
         .padding(bottom = Dimens.buttonBottomPadding)
 
     Button(
-        onClick = if (isDeleteMode.value) {
-            onDelete
-        } else {
-            if (contentView.value) {
-                taskEditorDone
-            } else {
-                onClick
-            }
-        },
+        onClick = if (isDeleteMode.value) onDelete else onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isDeleteMode.value) {
-                MaterialTheme.colorScheme.onSecondary
-            } else {
-                if (contentView.value) {
-                    Orange
-                } else {
-                    MaterialTheme.colorScheme.tertiary
-                }
-            }
+            containerColor = if (isDeleteMode.value) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.tertiary
         ),
         modifier = modifier
     ) {
         Text(
             text = stringResource(
-                if (isDeleteMode.value) {
-                    R.string.deletar
-                } else {
-                    if (contentView.value) {
-                        R.string.editar
-                    } else {
-                        R.string.salvar
-                    }
-                }
+                if (isDeleteMode.value) R.string.deletar else R.string.salvar
             ),
             style = MaterialTheme.typography.labelSmall
         )

@@ -4,7 +4,7 @@
     <string name="salvar">Salvar</string>
     <string name="deletar">Deletar</string>
     <string name="description_icon_back">Ícone de voltar</string>
-    <string name="editar">Editar</string>
+    <string name="editar">Salvar alteração</string>
     <string name="botaoWhatsApp">WhatsAppButton</string>
     <string name="erro">WhatsApp não instalado</string>
 </resources>

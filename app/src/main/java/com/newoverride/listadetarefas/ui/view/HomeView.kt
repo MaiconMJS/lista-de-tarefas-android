@@ -63,7 +63,8 @@ fun HomeView() {
                     taskEditorDone = taskHook.taskEditorDone,
                     messageToEditor = taskHook.messageToEditor,
                     whatsAppPressed = taskHook.whatsAppPressed,
-                    whatsAppShare = taskHook.whatsAppShare
+                    whatsAppShare = taskHook.whatsAppShare,
+                    hideButtonEditor = taskHook.hideButtonEditor
                 )
             }
         }

@@ -48,7 +48,8 @@ fun CardCustom(
     taskEditorDone: () -> Unit,
     messageToEditor: MutableState<String>,
     whatsAppPressed: MutableState<Boolean>,
-    whatsAppShare: () -> Unit
+    whatsAppShare: () -> Unit,
+    hideButtonEditor: MutableState<Boolean>
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
@@ -108,18 +109,20 @@ fun CardCustom(
                     .animateContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (!contentView.value) TextFieldCustom(
-                    textFieldText = textFieldText,
-                    addTaskDone = addTaskDone,
-                )
-                ButtonCustom(
-                    onClick = saveTask,
-                    isPressed = isPressed,
-                    onDelete = onDelete,
-                    isDeleteMode = isDeleteMode,
-                    contentView = contentView,
-                    taskEditorDone = taskEditorDone,
-                )
+                if (!contentView.value) {
+                    TextFieldCustom(
+                        textFieldText = textFieldText,
+                        addTaskDone = addTaskDone,
+                    )
+                    ButtonCustom(
+                        onClick = saveTask,
+                        isPressed = isPressed,
+                        onDelete = onDelete,
+                        isDeleteMode = isDeleteMode,
+                    )
+                } else if (contentView.value && hideButtonEditor.value) {
+                    ButtonEditor(isPressed = isPressed, taskEditorDone = taskEditorDone)
+                }
             }
         }
     }
