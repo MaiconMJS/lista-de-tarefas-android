@@ -5,6 +5,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
@@ -16,11 +17,15 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.newoverride.listadetarefas.App
 import com.newoverride.listadetarefas.R
+import com.newoverride.listadetarefas.infra.entitys.Task
 import com.newoverride.listadetarefas.model.TaskHookModel
 import com.newoverride.listadetarefas.model.TaskModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -28,6 +33,9 @@ import kotlinx.coroutines.launch
 fun taskHook(): TaskHookModel {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val app = context.applicationContext as? App
+    val dao = app?.db?.taskDao()
+    val loadedOnce = remember { mutableStateOf(false) }
     val compareText = remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
@@ -89,6 +97,17 @@ fun taskHook(): TaskHookModel {
     fun onDelete(taskList: SnapshotStateList<TaskModel>) {
         animatedButton(isPressed)
         val itemsToRemove = taskList.filter { it.marked.value }
+        coroutineScope.launch(Dispatchers.IO) {
+            // DELETE ON DATABASE
+            itemsToRemove.forEach { items ->
+                dao?.deleteTask(
+                    Task(
+                        uid = items.idDatabase.intValue,
+                        taskName = items.message.value
+                    )
+                )
+            }
+        }
         if (itemsToRemove.isNotEmpty()) {
             itemsToRemove.forEach { item ->
                 item.isVisible.value = false
@@ -134,26 +153,32 @@ fun taskHook(): TaskHookModel {
         var removeSpace = textFieldText.value.trim()
         focusManager.clearFocus()
         if (removeSpace.isEmpty()) return
-        val index = taskList.size
-        val newTask = TaskModel(
-            id = mutableIntStateOf(index + 1),
-            message = mutableStateOf(removeSpace),
-            isVisible = mutableStateOf(false)
-        )
+        // FETCH MAX ID FROM DATABASE
+        coroutineScope.launch(Dispatchers.IO) {
+            // SAVE ON DATABASE
+            val generatedId = dao?.insertTask(Task(taskName = removeSpace))?.toInt() ?: 0
+            val index = taskList.size
+            val newTask = TaskModel(
+                id = mutableIntStateOf(index + 1),
+                idDatabase = mutableIntStateOf(generatedId),
+                message = mutableStateOf(removeSpace),
+                isVisible = mutableStateOf(false)
+            )
+            taskList.add(newTask)
+            coroutineScope.launch {
+                delay(100)
+                newTask.isVisible.value = true
+                lazyListState.animateScrollToItem(taskList.size - 1)
+            }
+            showAllTaskInfo(taskList)
+        }
         textFieldText.value = ""
         animatedButton(isPressed)
         focusManager.clearFocus()
-        taskList.add(newTask)
-        coroutineScope.launch {
-            delay(100)
-            newTask.isVisible.value = true
-            lazyListState.animateScrollToItem(taskList.size - 1)
-        }
     }
 
     fun saveTask(taskList: SnapshotStateList<TaskModel>) {
         verifyTextFieldAndAddTask(taskList)
-        showAllTaskInfo(taskList)
     }
 
     val saveTask = {
@@ -218,6 +243,10 @@ fun taskHook(): TaskHookModel {
     }
 
     fun taskEditorDone() {
+        val uid = taskList[indexTask.intValue - 1].idDatabase.intValue
+        coroutineScope.launch(Dispatchers.IO) {
+            dao?.updateTask(Task(uid = uid, taskName = messageToEditor.value))
+        }
         animatedButton(isPressed)
         coroutineScope.launch {
             delay(300)
@@ -252,6 +281,37 @@ fun taskHook(): TaskHookModel {
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             if (taskList.isNotEmpty()) if (!taskList[0].showCheckBox.value) showAllTaskInfo(taskList)
+        }
+    }
+
+    fun loadDatabaseStartedActivity(event: Lifecycle.Event) {
+        if (event == Lifecycle.Event.ON_CREATE && !loadedOnce.value) {
+            loadedOnce.value = true
+            coroutineScope.launch(Dispatchers.IO) {
+                val allDatabaseTask = dao?.getAllTasks()
+                if (allDatabaseTask?.isNotEmpty() == true) {
+                    allDatabaseTask.forEach { items ->
+                        taskList.add(
+                            TaskModel(
+                                id = mutableIntStateOf(items.uid),
+                                idDatabase = mutableIntStateOf(items.uid),
+                                message = mutableStateOf(items.taskName)
+                            )
+                        )
+                    }
+                }
+                rebuildId(taskList)
+            }
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            loadDatabaseStartedActivity(event)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 

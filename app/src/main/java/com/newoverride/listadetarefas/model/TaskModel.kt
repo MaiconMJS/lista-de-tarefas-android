@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 
 data class TaskModel(
     val id: MutableIntState,
+    val idDatabase: MutableIntState,
     val showCheckBox: MutableState<Boolean> = mutableStateOf(false),
     val marked: MutableState<Boolean> = mutableStateOf(false),
     val message: MutableState<String>,
