@@ -303,6 +303,24 @@ fun taskHook(): TaskHookModel {
                 rebuildId(taskList)
             }
         }
+        if (event == Lifecycle.Event.ON_RESUME) {
+            coroutineScope.launch(Dispatchers.IO) {
+                val allTaskDatabase = dao?.getAllTasks()
+                if (allTaskDatabase?.isEmpty() == true) return@launch
+                if (taskList.size != allTaskDatabase?.size) {
+                    allTaskDatabase?.forEach { items ->
+                        taskList.add(
+                            TaskModel(
+                                id = mutableIntStateOf(items.uid),
+                                idDatabase = mutableIntStateOf(items.uid),
+                                message = mutableStateOf(items.taskName)
+                            )
+                        )
+                    }
+                }
+                rebuildId(taskList)
+            }
+        }
     }
 
     DisposableEffect(lifecycleOwner) {
