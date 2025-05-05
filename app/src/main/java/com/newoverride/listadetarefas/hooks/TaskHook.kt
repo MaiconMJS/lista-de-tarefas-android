@@ -128,14 +128,6 @@ fun taskHook(): TaskHookModel {
         allTask.intValue = totalChecked
     }
 
-    val zeroAllTaskInfo = {
-        zeroAllTaskInfo()
-    }
-
-    val onDelete = {
-        onDelete(taskList)
-    }
-
     fun showAllCheckBox(taskList: SnapshotStateList<TaskModel>) {
         taskList.forEach { items ->
             items.showCheckBox.value = true
@@ -143,10 +135,6 @@ fun taskHook(): TaskHookModel {
         visibilityX.value = true
         isDeleteMode.value = true
         focusManager.clearFocus()
-    }
-
-    val showAllCheckBox = {
-        showAllCheckBox(taskList)
     }
 
     fun verifyTextFieldAndAddTask(taskList: SnapshotStateList<TaskModel>) {
@@ -181,22 +169,6 @@ fun taskHook(): TaskHookModel {
         verifyTextFieldAndAddTask(taskList)
     }
 
-    val saveTask = {
-        saveTask(taskList)
-    }
-
-    val hideX = {
-        hideX(taskList)
-    }
-
-    val checkedCont = {
-        checkedCont(taskList)
-    }
-
-    val addTaskDone = {
-        saveTask(taskList)
-    }
-
     fun selectAllTask(taskList: SnapshotStateList<TaskModel>) {
         if (taskList.isNotEmpty() && taskList[0].showCheckBox.value) {
             val verifyMarked = taskList.filter { it.marked.value }.size
@@ -216,7 +188,6 @@ fun taskHook(): TaskHookModel {
         }
     }
 
-
     val goToContent = {
         if (taskList.isNotEmpty() && !taskList[0].showCheckBox.value) {
             contentView.value = !contentView.value
@@ -234,14 +205,6 @@ fun taskHook(): TaskHookModel {
         contentView.value = !contentView.value
     }
 
-    val arrowBack = {
-        arrowBack()
-    }
-
-    val selectAllTask = {
-        selectAllTask(taskList)
-    }
-
     fun taskEditorDone() {
         val uid = taskList[indexTask.intValue - 1].idDatabase.intValue
         coroutineScope.launch(Dispatchers.IO) {
@@ -253,10 +216,6 @@ fun taskHook(): TaskHookModel {
             taskList[indexTask.intValue - 1].message.value = messageToEditor.value
             arrowBack()
         }
-    }
-
-    val taskEditorDone = {
-        taskEditorDone()
     }
 
     val whatsAppShare = {
@@ -303,24 +262,6 @@ fun taskHook(): TaskHookModel {
                 rebuildId(taskList)
             }
         }
-        if (event == Lifecycle.Event.ON_RESUME) {
-            coroutineScope.launch(Dispatchers.IO) {
-                val allTaskDatabase = dao?.getAllTasks()
-                if (allTaskDatabase?.isEmpty() == true) return@launch
-                if (taskList.size != allTaskDatabase?.size) {
-                    allTaskDatabase?.forEach { items ->
-                        taskList.add(
-                            TaskModel(
-                                id = mutableIntStateOf(items.uid),
-                                idDatabase = mutableIntStateOf(items.uid),
-                                message = mutableStateOf(items.taskName)
-                            )
-                        )
-                    }
-                }
-                rebuildId(taskList)
-            }
-        }
     }
 
     DisposableEffect(lifecycleOwner) {
@@ -337,24 +278,24 @@ fun taskHook(): TaskHookModel {
         textFieldText = textFieldText,
         isPressed = isPressed,
         taskList = taskList,
-        saveTask = saveTask,
+        saveTask = { saveTask(taskList) },
         allTask = allTask,
-        showAllCheckBox = showAllCheckBox,
-        zeroAllTaskInfo = zeroAllTaskInfo,
+        showAllCheckBox = { showAllCheckBox(taskList) },
+        zeroAllTaskInfo = { zeroAllTaskInfo() },
         visibilityX = visibilityX,
-        hideX = hideX,
-        checkedCont = checkedCont,
-        onDelete = onDelete,
+        hideX = { hideX(taskList) },
+        checkedCont = { checkedCont(taskList) },
+        onDelete = { onDelete(taskList) },
         isDeleteMode = isDeleteMode,
-        addTaskDone = addTaskDone,
+        addTaskDone = { saveTask(taskList) },
         lazyListState = lazyListState,
-        selectAllTask = selectAllTask,
+        selectAllTask = { selectAllTask(taskList) },
         pressedAllTask = pressedAllTask,
         goToContent = goToContent,
         contentView = contentView,
         indexTask = indexTask,
-        arrowBack = arrowBack,
-        taskEditorDone = taskEditorDone,
+        arrowBack = { arrowBack() },
+        taskEditorDone = { taskEditorDone() },
         messageToEditor = messageToEditor,
         whatsAppPressed = whatsAppPressed,
         whatsAppShare = whatsAppShare,
